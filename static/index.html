@@ -1,0 +1,1553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>GSU CS — Unofficial Professor Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+:root{
+  --ink:#0f0e17;--ink2:#2d2b3d;--paper:#faf9f6;--warm:#f5f0e8;
+  --gold:#c9a84c;--gold2:#e8c97a;--sage:#4a7c59;--slate:#5a6a7a;
+  --border:#e2ddd5;--muted:#9a9080;--rust:#b94040;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--paper);font-family:'Outfit',sans-serif;color:var(--ink);min-height:100vh;}
+
+/* ── NAV ── */
+nav{border-bottom:1px solid var(--border);padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:52px;background:var(--paper);position:sticky;top:0;z-index:100;}
+.nav-logo{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--ink);}
+.nav-logo em{font-style:italic;color:var(--gold);}
+.nav-tabs{display:flex;gap:0;}
+.nav-tab{font:600 9px/1 'Outfit',sans-serif;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);padding:0 16px;height:52px;display:flex;align-items:center;cursor:pointer;border-bottom:2px solid transparent;transition:color .2s,border-color .2s;}
+.nav-tab:hover,.nav-tab.active{color:var(--ink);border-color:var(--gold);}
+.nav-pill{background:var(--ink);color:var(--gold);font:600 8px/1 'Outfit',sans-serif;letter-spacing:.1em;text-transform:uppercase;padding:6px 12px;border-radius:2px;cursor:pointer;transition:background .2s;}
+.nav-pill:hover{background:var(--gold);color:var(--ink);}
+
+/* ── HERO ── */
+#page-landing{display:block;}
+#page-chat{display:none;}
+#page-home,#page-explore,#page-battle,#page-board{display:none;}
+
+.hero{text-align:center;padding:52px 24px 0;border-bottom:1px solid var(--border);}
+.eyebrow{font:600 9px/1 'Outfit',sans-serif;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:14px;}
+.eyebrow::before,.eyebrow::after{content:'';display:inline-block;width:36px;height:1px;background:var(--gold);}
+h1{font:700 clamp(2rem,5vw,3.6rem)/1.08 'Playfair Display',serif;color:var(--ink);margin:0 0 8px;letter-spacing:-.01em;}
+h1 em{font-style:italic;color:var(--gold);}
+.sub{font:300 .9rem/1.7 'Outfit',sans-serif;color:var(--muted);margin:0 auto 22px;max-width:460px;}
+.stats-row{display:flex;border-top:1px solid var(--border);}
+.stat{flex:1;padding:14px 0;text-align:center;border-right:1px solid var(--border);}
+.stat:last-child{border-right:none;}
+.stat-n{font:700 1.6rem/1 'Playfair Display',serif;color:var(--ink);display:block;}
+.stat-l{font:600 8px/1 'Outfit',sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);display:block;margin-top:3px;}
+
+/* ── SEARCH ── */
+.search-wrap{max-width:700px;margin:0 auto;padding:32px 24px 0;}
+.search-label{font:600 9px/1 'Outfit',sans-serif;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:7px;display:block;}
+.search-row{display:flex;gap:8px;position:relative;}
+#search-input{flex:1;background:#fff;border:1px solid var(--border);border-radius:3px;padding:12px 16px;font:300 italic .95rem/1 'Outfit',sans-serif;color:var(--ink);outline:none;transition:border-color .2s,box-shadow .2s;}
+#search-input:focus{border-color:var(--gold);box-shadow:0 0 0 3px #c9a84c14;font-style:normal;}
+#search-input::placeholder{color:#c0bab2;}
+.search-btn{background:var(--ink);border:2px solid var(--ink);border-radius:3px;color:#fff;font:600 9px/1 'Outfit',sans-serif;letter-spacing:.14em;text-transform:uppercase;padding:0 22px;cursor:pointer;white-space:nowrap;transition:background .2s,border-color .2s,transform .15s;}
+.search-btn:hover{background:var(--gold);border-color:var(--gold);color:var(--ink);transform:translateY(-1px);}
+#suggestions{position:absolute;top:100%;left:0;right:0;background:#fff;border:1px solid var(--border);border-top:none;border-radius:0 0 3px 3px;z-index:50;display:none;max-height:200px;overflow-y:auto;}
+.sugg-item{padding:10px 16px;font:300 .88rem/1 'Outfit',sans-serif;color:var(--slate);cursor:pointer;border-bottom:1px solid var(--border);transition:background .15s;}
+.sugg-item:last-child{border-bottom:none;}
+.sugg-item:hover{background:var(--warm);}
+.sugg-item strong{font-weight:500;color:var(--ink);}
+
+/* ── TAGS ── */
+.tags-section{max-width:700px;margin:0 auto;padding:20px 24px 0;}
+.tags-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
+.tag{background:var(--warm);border:1px solid var(--border);border-radius:2px;color:var(--slate);font:500 9px/1 'Outfit',sans-serif;letter-spacing:.08em;text-transform:uppercase;padding:5px 10px;cursor:pointer;transition:all .15s;}
+.tag:hover,.tag.on{background:var(--ink);border-color:var(--ink);color:var(--gold);}
+
+/* ── SORT ── */
+.sort-row{display:flex;align-items:center;gap:8px;padding:16px 24px 0;max-width:700px;margin:0 auto;}
+.sort-label{font:600 9px/1 'Outfit',sans-serif;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);}
+.sort-btn{background:transparent;border:1px solid var(--border);border-radius:2px;color:var(--slate);font:400 9px/1 'Outfit',sans-serif;padding:5px 10px;cursor:pointer;transition:all .15s;white-space:nowrap;}
+.sort-btn:hover,.sort-btn.on{background:var(--gold);border-color:var(--gold);color:var(--ink);}
+
+/* ── ANSWER ── */
+.answer-section{max-width:700px;margin:0 auto;padding:20px 24px 0;}
+.sec-label{font:600 9px/1 'Outfit',sans-serif;letter-spacing:.2em;text-transform:uppercase;margin-bottom:7px;display:flex;align-items:center;gap:7px;}
+.answer-box{background:#fff;border:1px solid var(--border);border-left:3px solid var(--gold);border-radius:3px;padding:18px 20px;font:300 .93rem/1.85 'Outfit',sans-serif;color:var(--ink2);min-height:60px;transition:opacity .35s;}
+.source-box{background:var(--warm);border:1px solid var(--border);border-left:3px solid var(--sage);border-radius:3px;padding:10px 14px;font:400 .83rem/1.8 'Outfit',sans-serif;color:var(--sage);margin-top:10px;}
+
+/* ── PROF CARDS ── */
+.profs-section{max-width:700px;margin:0 auto;padding:24px 24px 0;}
+.profs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-top:10px;}
+.prof-card{background:#fff;border:1px solid var(--border);border-radius:4px;padding:14px;cursor:pointer;transition:border-color .18s,transform .15s,box-shadow .15s;position:relative;}
+.prof-card:hover{border-color:var(--gold);transform:translateY(-2px);box-shadow:0 4px 16px #0f0e1710;}
+.prof-card.selected-cmp{border-color:var(--gold);border-width:2px;background:#fdf8ee;}
+.prof-card .cmp-check{position:absolute;top:10px;right:10px;width:18px;height:18px;border:1.5px solid var(--border);border-radius:2px;display:flex;align-items:center;justify-content:center;transition:all .15s;font-size:10px;color:transparent;}
+.prof-card.selected-cmp .cmp-check{background:var(--gold);border-color:var(--gold);color:var(--ink);}
+.prof-card-top{display:flex;align-items:center;gap:9px;margin-bottom:10px;}
+.prof-av{width:32px;height:32px;border-radius:3px;background:var(--ink);display:flex;align-items:center;justify-content:center;font:600 10px/1 'Outfit',sans-serif;color:var(--gold);flex-shrink:0;}
+.prof-name{font:600 .82rem/1.3 'Outfit',sans-serif;color:var(--ink);}
+.prof-dept{font:300 .72rem/1 'Outfit',sans-serif;color:var(--muted);margin-top:2px;}
+.prof-tags{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px;}
+.prof-tag{background:var(--warm);border:1px solid var(--border);border-radius:2px;font:500 7px/1 'Outfit',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--slate);padding:3px 6px;}
+.mini-bar-wrap{margin-bottom:4px;}
+.mini-bar-label{display:flex;justify-content:space-between;font:400 8px/1 'Outfit',sans-serif;color:var(--muted);margin-bottom:3px;}
+.mini-bar{height:4px;background:var(--warm);border-radius:2px;overflow:hidden;}
+.mini-bar-fill{height:100%;border-radius:2px;background:var(--gold);transition:width .8s cubic-bezier(.4,0,.2,1);}
+.mini-bar-fill.sage{background:var(--sage);}
+.mini-bar-fill.rust{background:var(--rust);}
+.prof-card-actions{display:flex;gap:6px;margin-top:10px;}
+.prof-btn{flex:1;background:transparent;border:1px solid var(--border);border-radius:2px;font:600 8px/1 'Outfit',sans-serif;letter-spacing:.1em;text-transform:uppercase;color:var(--slate);padding:6px 0;cursor:pointer;transition:all .15s;}
+.prof-btn:hover{background:var(--ink);border-color:var(--ink);color:var(--gold);}
+.prof-btn.cmp{background:transparent;}
+.prof-btn.cmp.added{background:var(--gold);border-color:var(--gold);color:var(--ink);}
+
+/* ── ORNAMENT ── */
+.ornament{text-align:center;color:var(--border);font-size:13px;letter-spacing:.5em;padding:24px 0;user-select:none;}
+
+/* ── EXPLORE PAGE ── */
+.page-inner{max-width:700px;margin:0 auto;padding:32px 24px;}
+.page-title{font:700 1.6rem/1.1 'Playfair Display',serif;color:var(--ink);margin-bottom:4px;}
+.page-title em{font-style:italic;color:var(--gold);}
+.page-sub{font:300 .85rem/1.6 'Outfit',sans-serif;color:var(--muted);margin-bottom:24px;}
+.explore-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;}
+.explore-card{background:#fff;border:1px solid var(--border);border-radius:4px;padding:18px;transition:border-color .18s,transform .15s;}
+.explore-card:hover{border-color:var(--gold);transform:translateY(-2px);}
+.ec-header{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.ec-av{width:38px;height:38px;border-radius:3px;background:var(--ink);display:flex;align-items:center;justify-content:center;font:600 11px/1 'Outfit',sans-serif;color:var(--gold);}
+.ec-name{font:600 .9rem/1.3 'Outfit',sans-serif;color:var(--ink);}
+.ec-dept{font:300 .75rem/1 'Outfit',sans-serif;color:var(--muted);margin-top:2px;}
+/* radar container */
+.radar-wrap{position:relative;width:100%;height:160px;margin-bottom:12px;}
+/* sliders */
+.slider-row{margin-bottom:8px;}
+.slider-header{display:flex;justify-content:space-between;font:400 9px/1 'Outfit',sans-serif;color:var(--muted);margin-bottom:5px;}
+.slider-track{height:6px;background:var(--warm);border-radius:3px;position:relative;overflow:visible;}
+.slider-fill{height:100%;border-radius:3px;background:var(--gold);transition:width .6s;}
+.slider-thumb{width:14px;height:14px;border-radius:50%;background:#fff;border:2px solid var(--gold);position:absolute;top:50%;transform:translate(-50%,-50%);transition:left .6s;cursor:ew-resize;}
+.vibe-labels{display:flex;justify-content:space-between;font:300 8px/1 'Outfit',sans-serif;color:var(--muted);margin-top:4px;}
+.ec-actions{display:flex;gap:6px;margin-top:14px;}
+.ec-btn{flex:1;background:var(--ink);border:none;border-radius:2px;color:#fff;font:600 8px/1 'Outfit',sans-serif;letter-spacing:.12em;text-transform:uppercase;padding:9px 0;cursor:pointer;transition:background .2s;}
+.ec-btn:hover{background:var(--gold);color:var(--ink);}
+.ec-btn.ghost{background:transparent;border:1px solid var(--border);color:var(--slate);}
+.ec-btn.ghost:hover{border-color:var(--gold);color:var(--ink);}
+
+/* ── BATTLE PAGE ── */
+.battle-select{display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap;}
+.battle-slot{flex:1;min-width:140px;background:#fff;border:1px dashed var(--border);border-radius:4px;padding:14px;text-align:center;min-height:80px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;transition:border-color .2s;}
+.battle-slot.filled{border-style:solid;border-color:var(--gold);background:#fdf8ee;}
+.battle-slot .slot-av{width:36px;height:36px;border-radius:3px;background:var(--ink);display:flex;align-items:center;justify-content:center;font:600 10px/1 'Outfit',sans-serif;color:var(--gold);}
+.battle-slot .slot-name{font:600 .82rem/1.2 'Outfit',sans-serif;color:var(--ink);}
+.battle-slot .slot-empty{font:300 italic .8rem/1 'Outfit',sans-serif;color:var(--muted);}
+.battle-slot .slot-remove{font:600 8px/1 'Outfit',sans-serif;color:var(--rust);cursor:pointer;letter-spacing:.08em;text-transform:uppercase;margin-top:4px;}
+.battle-chart-wrap{background:#fff;border:1px solid var(--border);border-radius:4px;padding:20px;margin-bottom:16px;}
+.battle-radar{height:300px;position:relative;}
+.battle-bars{margin-top:16px;}
+.battle-bar-row{margin-bottom:12px;}
+.battle-bar-label{font:500 9px/1 'Outfit',sans-serif;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+.battle-bars-inner{display:flex;flex-direction:column;gap:4px;}
+.b-bar{display:flex;align-items:center;gap:8px;}
+.b-bar-name{font:400 10px/1 'Outfit',sans-serif;color:var(--slate);width:110px;flex-shrink:0;}
+.b-bar-track{flex:1;height:8px;background:var(--warm);border-radius:2px;overflow:hidden;}
+.b-bar-fill{height:100%;border-radius:2px;transition:width 1s cubic-bezier(.4,0,.2,1);}
+.b-bar-val{font:600 9px/1 'Outfit',sans-serif;color:var(--ink);min-width:24px;text-align:right;}
+.winner-banner{background:var(--ink);color:var(--gold);font-family:'Playfair Display',serif;font-size:1.1rem;text-align:center;padding:16px;border-radius:3px;margin-bottom:16px;}
+.winner-banner em{font-style:italic;}
+
+/* ── LEADERBOARD ── */
+.board-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.board-card{background:#fff;border:1px solid var(--border);border-radius:4px;padding:16px;}
+.board-title{font:600 9px/1 'Outfit',sans-serif;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;display:flex;align-items:center;gap:7px;}
+.board-title::after{content:'';flex:1;height:1px;background:var(--border);}
+.board-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);}
+.board-row:last-child{border-bottom:none;}
+.board-rank{font:700 1rem/1 'Playfair Display',serif;color:var(--gold);width:20px;flex-shrink:0;}
+.board-av{width:24px;height:24px;border-radius:2px;background:var(--ink);display:flex;align-items:center;justify-content:center;font:600 7px/1 'Outfit',sans-serif;color:var(--gold);flex-shrink:0;}
+.board-name{font:500 .82rem/1.2 'Outfit',sans-serif;color:var(--ink);flex:1;}
+.board-val{font:600 .8rem/1 'Outfit',sans-serif;color:var(--muted);}
+
+/* ── HEATMAP ── */
+.heatmap-wrap{background:#fff;border:1px solid var(--border);border-radius:4px;padding:16px;margin-top:14px;}
+.heatmap-grid{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+.hq-item{background:var(--warm);border:1px solid var(--border);border-radius:2px;padding:6px 10px;cursor:pointer;transition:all .15s;font:400 .78rem/1.3 'Outfit',sans-serif;color:var(--slate);}
+.hq-item:hover{background:var(--gold);border-color:var(--gold);color:var(--ink);}
+.hq-item.hot{background:var(--ink);border-color:var(--ink);color:var(--gold);font-size:.85rem;}
+.hq-item.warm{background:#3a2f10;border-color:#5a4a20;color:var(--gold2);font-size:.82rem;}
+
+/* ── RATING MODAL ── */
+.modal-bg{position:fixed;inset:0;background:#0f0e1780;z-index:200;display:none;align-items:center;justify-content:center;}
+.modal-bg.open{display:flex;}
+.modal{background:var(--paper);border:1px solid var(--border);border-radius:6px;padding:28px;max-width:400px;width:90%;position:relative;}
+.modal-close{position:absolute;top:12px;right:14px;font-size:1.1rem;cursor:pointer;color:var(--muted);}
+.modal-title{font:700 1.3rem/1.1 'Playfair Display',serif;color:var(--ink);margin-bottom:4px;}
+.modal-title em{font-style:italic;color:var(--gold);}
+.modal-sub{font:300 .82rem/1.5 'Outfit',sans-serif;color:var(--muted);margin-bottom:18px;}
+.star-row{display:flex;gap:6px;justify-content:center;margin-bottom:14px;}
+.star{font-size:1.6rem;cursor:pointer;color:var(--border);transition:color .15s,transform .1s;}
+.star:hover,.star.lit{color:var(--gold);transform:scale(1.15);}
+.modal-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px;}
+.modal-tag{background:var(--warm);border:1px solid var(--border);border-radius:2px;color:var(--slate);font:500 9px/1 'Outfit',sans-serif;letter-spacing:.08em;text-transform:uppercase;padding:6px 10px;cursor:pointer;transition:all .15s;}
+.modal-tag:hover,.modal-tag.on{background:var(--ink);border-color:var(--ink);color:var(--gold);}
+.modal-submit{width:100%;background:var(--ink);border:none;border-radius:3px;color:#fff;font:600 9px/1 'Outfit',sans-serif;letter-spacing:.14em;text-transform:uppercase;padding:12px;cursor:pointer;transition:background .2s;}
+.modal-submit:hover{background:var(--gold);color:var(--ink);}
+
+/* ── TOAST ── */
+#toast{position:fixed;bottom:24px;right:24px;z-index:300;background:var(--ink);color:var(--gold);border-radius:3px;font:600 10px/1 'Outfit',sans-serif;letter-spacing:.08em;padding:10px 18px;opacity:0;transform:translateY(8px);transition:opacity .25s,transform .25s;pointer-events:none;}
+#toast.show{opacity:1;transform:translateY(0);}
+
+/* ── FOOTER ── */
+footer{text-align:center;padding:28px;border-top:1px solid var(--border);margin-top:32px;font:400 9px/1 'Outfit',sans-serif;letter-spacing:.1em;color:var(--muted);}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">The <em>Unofficial</em> Guide</div>
+  <div class="nav-tabs">
+    <div class="nav-tab active" onclick="showPage('landing',this)">Home</div>
+    <div class="nav-tab" onclick="showPage('home',this)">Search</div>
+    <div class="nav-tab" onclick="showPage('explore',this)">Explore</div>
+    <div class="nav-tab" onclick="showPage('battle',this)">Battle ⚔</div>
+    <div class="nav-tab" onclick="showPage('board',this)">Leaderboard</div>
+    <div class="nav-tab" onclick="showPage('chat',this)">AI Chat</div>
+  </div>
+  <div class="nav-pill" onclick="openRating(null)">Rate a Prof +</div>
+</nav>
+
+<!-- ═══════════════ LANDING PAGE ═══════════════ -->
+<style>
+/* ── LANDING — dark editorial cover, totally distinct ── */
+#page-landing{ background:var(--paper); color:var(--ink); }
+
+/* ticker tape */
+
+
+
+ to{transform:translateX(-50%);} }
+
+/* cover grid */
+.lp-cover{
+  display:grid; grid-template-columns:1fr 400px;
+  min-height:calc(100vh - 84px);
+  border-bottom:1px solid var(--border);
+}
+.lp-left{
+  border-right:1px solid var(--border);
+  display:flex; flex-direction:column; justify-content:space-between;
+  padding:0;
+}
+.lp-left-top{
+  padding:48px 48px 0;
+  border-bottom:1px solid var(--border);
+}
+.lp-issue{
+  font:600 9px/1 'Outfit',sans-serif; letter-spacing:.24em; text-transform:uppercase;
+  color:#c9a84c; margin-bottom:24px;
+}
+.lp-headline{
+  font:700 clamp(3rem,6vw,5.5rem)/1 'Playfair Display',serif;
+  color:var(--ink); letter-spacing:-.02em; margin:0 0 0;
+}
+.lp-headline em{ font-style:italic; color:#c9a84c; display:block; }
+.lp-sub-head{
+  font:400 italic 1.15rem/1.5 'Playfair Display',serif;
+  color:var(--muted); margin:18px 0 32px; max-width:460px;
+}
+.lp-cta-row{ display:flex; gap:10px; margin-bottom:40px; flex-wrap:wrap; }
+.lp-btn-primary{
+  background:#c9a84c; border:2px solid #c9a84c; border-radius:2px;
+  color:#0f0e17; font:700 9px/1 'Outfit',sans-serif; letter-spacing:.16em;
+  text-transform:uppercase; padding:14px 26px; cursor:pointer;
+  transition:background .2s,transform .15s;
+}
+.lp-btn-primary:hover{ background:#e8c97a; transform:translateY(-1px); }
+.lp-btn-ghost{
+  background:transparent; border:2px solid var(--border); border-radius:2px;
+  color:var(--slate); font:600 9px/1 'Outfit',sans-serif; letter-spacing:.16em;
+  text-transform:uppercase; padding:14px 26px; cursor:pointer;
+  transition:border-color .2s,color .2s,transform .15s;
+}
+.lp-btn-ghost:hover{ border-color:var(--gold); color:var(--ink); transform:translateY(-1px); }
+
+/* professor marquee strip */
+
+
+
+
+
+ to{transform:translateX(-50%);} }
+
+/* stats column */
+.lp-right{
+  display:flex; flex-direction:column;
+}
+.lp-stat-block{
+  flex:1; display:flex; flex-direction:column; justify-content:center;
+  align-items:center; text-align:center; padding:32px 20px;
+  border-bottom:1px solid var(--border); cursor:default;
+  transition:background .2s;
+}
+.lp-stat-block:last-child{ border-bottom:none; }
+.lp-stat-block:hover{ background:var(--warm); }
+.lp-stat-n{
+  font:700 clamp(2.2rem,4vw,3.8rem)/1 'Playfair Display',serif;
+  color:var(--gold); display:block; margin-bottom:6px;
+}
+.lp-stat-l{
+  font:600 8px/1 'Outfit',sans-serif; letter-spacing:.18em; text-transform:uppercase;
+  color:var(--muted); display:block; margin-bottom:10px;
+}
+.lp-stat-desc{
+  font:300 .78rem/1.6 'Outfit',sans-serif; color:var(--muted);
+  max-width:180px;
+}
+
+/* features row */
+.lp-features{
+  display:grid; grid-template-columns:repeat(4,1fr);
+  border-top:1px solid var(--border);
+}
+.lp-feat{
+  padding:28px 24px; border-right:1px solid var(--border);
+  cursor:pointer; transition:background .2s;
+  position:relative; overflow:hidden;
+}
+.lp-feat:last-child{ border-right:none; }
+.lp-feat::after{
+  content:''; position:absolute; bottom:0; left:0; right:0; height:2px;
+  background:#c9a84c; transform:scaleX(0); transform-origin:left;
+  transition:transform .3s;
+}
+.lp-feat:hover{ background:var(--warm); }
+.lp-feat:hover::after{ transform:scaleX(1); }
+.lp-feat-num{
+  font:700 2rem/1 'Playfair Display',serif; color:var(--gold);
+  margin-bottom:12px; display:block;
+}
+.lp-feat-title{
+  font:600 .88rem/1.3 'Outfit',sans-serif; color:var(--ink);
+  margin-bottom:6px;
+}
+.lp-feat-desc{
+  font:300 .78rem/1.55 'Outfit',sans-serif; color:var(--muted);
+}
+.lp-feat-arrow{
+  margin-top:14px; font:600 9px/1 'Outfit',sans-serif;
+  letter-spacing:.1em; text-transform:uppercase; color:#c9a84c;
+  display:inline-block; transition:transform .2s;
+}
+.lp-feat:hover .lp-feat-arrow{ transform:translateX(4px); }
+
+/* about section */
+.lp-about{
+  display:grid; grid-template-columns:280px 1fr;
+  border-top:1px solid var(--border);
+}
+.lp-about-left{
+  border-right:1px solid var(--border); padding:40px 36px;
+  display:flex; flex-direction:column; justify-content:space-between;
+}
+.lp-about-label{
+  font:600 8px/1 'Outfit',sans-serif; letter-spacing:.22em; text-transform:uppercase;
+  color:#c9a84c; margin-bottom:16px;
+}
+.lp-about-title{
+  font:700 1.6rem/1.2 'Playfair Display',serif; color:var(--ink); margin-bottom:12px;
+}
+.lp-about-title em{ font-style:italic; color:#c9a84c; }
+.lp-about-body{
+  font:300 .82rem/1.75 'Outfit',sans-serif; color:var(--muted);
+}
+.lp-stack{ margin-top:24px; }
+.lp-stack-row{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:9px 0; border-bottom:1px solid #ffffff10;
+}
+.lp-stack-row:last-child{ border-bottom:none; }
+.lp-stack-key{
+  font:600 8px/1 'Outfit',sans-serif; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--muted);
+}
+.lp-stack-val{
+  background:var(--warm); border:1px solid var(--border); border-radius:2px;
+  font:500 8px/1 'Outfit',sans-serif; letter-spacing:.06em; color:var(--slate);
+  padding:4px 8px;
+}
+.lp-about-right{ padding:40px 40px; background:var(--paper); }
+.lp-pipeline{
+  display:flex; flex-direction:column; gap:0; margin-top:4px;
+}
+.lp-pipe-step{
+  display:flex; gap:20px; align-items:flex-start;
+  padding:16px 0; border-bottom:1px solid #ffffff10;
+}
+.lp-pipe-step:last-child{ border-bottom:none; }
+.lp-pipe-num{
+  font:700 2rem/1 'Playfair Display',serif; color:var(--gold);
+  flex-shrink:0; width:40px; margin-top:-4px;
+}
+.lp-pipe-content{}
+.lp-pipe-title{
+  font:600 .85rem/1 'Outfit',sans-serif; color:var(--ink); margin-bottom:4px;
+}
+.lp-pipe-desc{
+  font:300 .78rem/1.6 'Outfit',sans-serif; color:var(--muted);
+}
+
+/* lp footer */
+.lp-footer{
+  border-top:1px solid var(--border); padding:18px 32px;
+  display:flex; justify-content:space-between; align-items:center;
+  flex-wrap:wrap; gap:8px;
+}
+.lp-footer-left{
+  font:700 .9rem/1 'Playfair Display',serif; color:var(--ink);
+}
+.lp-footer-left em{ font-style:italic; color:#c9a84c; }
+.lp-footer-right{
+  font:400 8px/1 'Outfit',sans-serif; letter-spacing:.1em; color:var(--muted);
+}
+
+@keyframes fadeUp{ from{opacity:0;transform:translateY(18px);} to{opacity:1;transform:translateY(0);} }
+</style>
+
+<div id="page-landing">
+
+  <!-- main cover grid -->
+  <div class="lp-cover">
+
+    <!-- LEFT col: headline + CTAs + marquee -->
+    <div class="lp-left">
+      <div class="lp-left-top">
+        <div class="lp-issue">GSU CS &nbsp;·&nbsp; AI 201 Project &nbsp;·&nbsp; Unofficial Guide</div>
+        <h1 class="lp-headline">
+          Know Before<br>You <em>Enroll.</em>
+        </h1>
+        <p class="lp-sub-head">
+          Real student reviews from Rate My Professors —<br>
+          searchable, comparable, and answered by AI.
+        </p>
+        <div class="lp-cta-row">
+          <button class="lp-btn-primary" onclick="showPage('home',document.querySelectorAll('.nav-tab')[1])">
+            Start Searching →
+          </button>
+          <button class="lp-btn-ghost" onclick="showPage('battle',document.querySelectorAll('.nav-tab')[3])">
+            Battle Professors ⚔
+          </button>
+          <button class="lp-btn-ghost" onclick="showPage('chat',document.querySelectorAll('.nav-tab')[5])">
+            AI Chat
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT col: stat blocks -->
+    <div class="lp-right">
+      <div class="lp-stat-block" onclick="showPage('home',document.querySelectorAll('.nav-tab')[1])">
+        <span class="lp-stat-n">12</span>
+        <span class="lp-stat-l">Professors indexed</span>
+        <span class="lp-stat-desc">Every GSU CS professor with Rate My Professors reviews.</span>
+      </div>
+      <div class="lp-stat-block" onclick="showPage('home',document.querySelectorAll('.nav-tab')[1])">
+        <span class="lp-stat-n">100+</span>
+        <span class="lp-stat-l">Student reviews</span>
+        <span class="lp-stat-desc">Chunked, embedded, and stored for semantic retrieval.</span>
+      </div>
+      <div class="lp-stat-block" onclick="showPage('explore',document.querySelectorAll('.nav-tab')[2])">
+        <span class="lp-stat-n">5</span>
+        <span class="lp-stat-l">Vibe dimensions</span>
+        <span class="lp-stat-desc">Clarity · Engagement · Fairness · Organization · Accessibility</span>
+      </div>
+      <div class="lp-stat-block" onclick="showPage('battle',document.querySelectorAll('.nav-tab')[3])">
+        <span class="lp-stat-n">3v3</span>
+        <span class="lp-stat-l">Battle mode</span>
+        <span class="lp-stat-desc">Compare up to 3 professors with live radar charts.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- features row -->
+  <div class="lp-features">
+    <div class="lp-feat" onclick="showPage('home',document.querySelectorAll('.nav-tab')[1])">
+      <span class="lp-feat-num">01</span>
+      <div class="lp-feat-title">AI-Powered Search</div>
+      <div class="lp-feat-desc">Ask in plain English. Groq Llama 3.3 answers using only retrieved review chunks — zero hallucination.</div>
+      <span class="lp-feat-arrow">Search →</span>
+    </div>
+    <div class="lp-feat" onclick="showPage('explore',document.querySelectorAll('.nav-tab')[2])">
+      <span class="lp-feat-num">02</span>
+      <div class="lp-feat-title">Radar Vibe Charts</div>
+      <div class="lp-feat-desc">Every professor visualised across 5 student-focused dimensions with animated radar charts.</div>
+      <span class="lp-feat-arrow">Explore →</span>
+    </div>
+    <div class="lp-feat" onclick="showPage('battle',document.querySelectorAll('.nav-tab')[3])">
+      <span class="lp-feat-num">03</span>
+      <div class="lp-feat-title">Battle Mode ⚔</div>
+      <div class="lp-feat-desc">Pick 2–3 professors for a head-to-head comparison with animated bar charts and a declared winner.</div>
+      <span class="lp-feat-arrow">Battle →</span>
+    </div>
+    <div class="lp-feat" onclick="showPage('board',document.querySelectorAll('.nav-tab')[4])">
+      <span class="lp-feat-num">04</span>
+      <div class="lp-feat-title">Live Leaderboard</div>
+      <div class="lp-feat-desc">Most searched, most compared, highest clarity, most engaging — updated every session.</div>
+      <span class="lp-feat-arrow">Board →</span>
+    </div>
+  </div>
+
+  <!-- about / pipeline -->
+  <div class="lp-about">
+    <div class="lp-about-left">
+      <div>
+        <div class="lp-about-label">About this project</div>
+        <div class="lp-about-title">The <em>Unofficial</em> Guide</div>
+        <div class="lp-about-body">
+          This RAG system makes student-generated knowledge searchable and answerable. Every response is grounded exclusively in real Rate My Professors reviews.
+        </div>
+      </div>
+      <div class="lp-stack">
+        <div class="lp-stack-row"><span class="lp-stack-key">Embeddings</span><span class="lp-stack-val">all-MiniLM-L6-v2</span></div>
+        <div class="lp-stack-row"><span class="lp-stack-key">Vector DB</span><span class="lp-stack-val">ChromaDB</span></div>
+        <div class="lp-stack-row"><span class="lp-stack-key">LLM</span><span class="lp-stack-val">Groq Llama 3.3</span></div>
+        <div class="lp-stack-row"><span class="lp-stack-key">Interface</span><span class="lp-stack-val">Flask + Gradio</span></div>
+        <div class="lp-stack-row"><span class="lp-stack-key">Data</span><span class="lp-stack-val">Rate My Professors</span></div>
+      </div>
+    </div>
+    <div class="lp-about-right">
+      <div class="lp-about-label">How the pipeline works</div>
+      <div class="lp-pipeline">
+        <div class="lp-pipe-step">
+          <span class="lp-pipe-num">01</span>
+          <div class="lp-pipe-content">
+            <div class="lp-pipe-title">Document Ingestion</div>
+            <div class="lp-pipe-desc">12 professor review files loaded from Rate My Professors, cleaned of HTML noise and boilerplate.</div>
+          </div>
+        </div>
+        <div class="lp-pipe-step">
+          <span class="lp-pipe-num">02</span>
+          <div class="lp-pipe-content">
+            <div class="lp-pipe-title">Chunking</div>
+            <div class="lp-pipe-desc">Reviews split into 500-character chunks with 100-character overlap to preserve context at boundaries.</div>
+          </div>
+        </div>
+        <div class="lp-pipe-step">
+          <span class="lp-pipe-num">03</span>
+          <div class="lp-pipe-content">
+            <div class="lp-pipe-title">Embedding + Vector Store</div>
+            <div class="lp-pipe-desc">all-MiniLM-L6-v2 embeds each chunk into a 384-dimensional vector, stored in ChromaDB with source metadata.</div>
+          </div>
+        </div>
+        <div class="lp-pipe-step">
+          <span class="lp-pipe-num">04</span>
+          <div class="lp-pipe-content">
+            <div class="lp-pipe-title">Retrieval</div>
+            <div class="lp-pipe-desc">Query is embedded and compared against all chunks via cosine similarity. Top-5 most relevant chunks retrieved.</div>
+          </div>
+        </div>
+        <div class="lp-pipe-step">
+          <span class="lp-pipe-num">05</span>
+          <div class="lp-pipe-content">
+            <div class="lp-pipe-title">Grounded Generation</div>
+            <div class="lp-pipe-desc">Groq's Llama 3.3 70B generates an answer using only the retrieved chunks — source files cited in every response.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="lp-footer">
+    <div class="lp-footer-left">The <em>Unofficial</em> Professor Guide</div>
+    <div class="lp-footer-right">GSU &nbsp;·&nbsp; AI 201 &nbsp;·&nbsp; ChromaDB &nbsp;·&nbsp; Groq Llama 3.3 &nbsp;·&nbsp; Flask + Gradio</div>
+  </div>
+
+</div>
+
+<!-- ═══════════════ HOME PAGE ═══════════════ -->
+<div id="page-home">
+  <div class="hero">
+    <div class="eyebrow">Georgia State University &nbsp; CS Department</div>
+    <h1>The <em>Unofficial</em><br>Professor Guide</h1>
+    <p class="sub">Real student reviews, made searchable with AI. Grounded answers — no hallucination.</p>
+    <div class="stats-row">
+      <div class="stat"><span class="stat-n">12</span><span class="stat-l">Professors</span></div>
+      <div class="stat"><span class="stat-n" id="review-count">104</span><span class="stat-l">Reviews indexed</span></div>
+      <div class="stat"><span class="stat-n" id="q-count">0</span><span class="stat-l">Questions asked</span></div>
+      <div class="stat"><span class="stat-n" id="cmp-count">0</span><span class="stat-l">Comparisons made</span></div>
+    </div>
+  </div>
+
+  <!-- SEARCH -->
+  <div class="search-wrap">
+    <span class="search-label">Ask anything about a professor</span>
+    <div class="search-row">
+      <input id="search-input" type="text" placeholder="Which professor explains concepts most clearly?" autocomplete="off"/>
+      <button class="search-btn" id="ask-btn">Ask →</button>
+      <div id="suggestions"></div>
+    </div>
+  </div>
+
+  <!-- TAGS -->
+  <div class="tags-section">
+    <span class="search-label">Filter by tag</span>
+    <div class="tags-row" id="tag-filter"></div>
+  </div>
+
+  <!-- SORT -->
+  <div class="sort-row">
+    <span class="sort-label">Sort by</span>
+    <div id="sort-btns"></div>
+  </div>
+
+  <!-- ANSWER -->
+  <div class="answer-section" id="answer-section" style="display:none;">
+    <div class="sec-label" style="color:var(--gold);">■ Answer</div>
+    <div class="answer-box" id="answer-box"></div>
+    <div class="source-box" id="source-box"></div>
+  </div>
+
+  <!-- PROF CARDS -->
+  <div class="profs-section">
+    <span class="search-label">Professors — click to ask, ☑ to compare</span>
+    <div class="profs-grid" id="profs-grid"></div>
+  </div>
+
+  <div class="ornament">✦ &nbsp; ✦ &nbsp; ✦</div>
+</div>
+
+<!-- ═══════════════ EXPLORE PAGE ═══════════════ -->
+<div id="page-explore">
+  <div class="page-inner">
+    <div class="page-title">Explore <em>Professors</em></div>
+    <p class="page-sub">Vibe scores, difficulty sliders, and radar charts for every professor.</p>
+    <div class="explore-grid" id="explore-grid"></div>
+  </div>
+</div>
+
+<!-- ═══════════════ BATTLE PAGE ═══════════════ -->
+<div id="page-battle">
+  <div class="page-inner">
+    <div class="page-title">Battle <em>of the Professors</em> ⚔</div>
+    <p class="page-sub">Select 2–3 professors from the Search tab (☑ checkbox) then hit Compare. Or pick here:</p>
+    <div class="battle-select" id="battle-slots"></div>
+    <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;" id="battle-pick"></div>
+    <div id="battle-result" style="display:none;">
+      <div class="winner-banner" id="winner-banner"></div>
+      <div class="battle-chart-wrap">
+        <div class="battle-radar"><canvas id="battle-radar-canvas"></canvas></div>
+      </div>
+      <div class="battle-chart-wrap battle-bars" id="battle-bars"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ LEADERBOARD PAGE ═══════════════ -->
+<div id="page-board">
+  <div class="page-inner">
+    <div class="page-title"><em>Leaderboard</em></div>
+    <p class="page-sub">Most searched, highest rated, and most compared professors this session.</p>
+    <div class="board-grid" id="board-grid"></div>
+    <!-- heatmap -->
+    <div class="heatmap-wrap">
+      <div class="board-title">Question heat map</div>
+      <div class="heatmap-grid" id="heatmap"></div>
+    </div>
+  </div>
+</div>
+
+<!-- RATING MODAL -->
+<div class="modal-bg" id="modal-bg">
+  <div class="modal">
+    <span class="modal-close" onclick="closeModal()">✕</span>
+    <div class="modal-title">Rate <em id="modal-prof-name">a Professor</em></div>
+    <p class="modal-sub">Quick rating — no writing needed. Your input updates the stats live.</p>
+
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px;">
+      <div>
+        <label style="font:600 8px/1 Outfit,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:5px;">Professor name</label>
+        <input id="modal-prof-input" type="text" list="modal-prof-list"
+          placeholder="e.g. William Johnson"
+          style="width:100%;background:#fff;border:1px solid var(--border);border-radius:3px;
+                 padding:10px 12px;font:300 .88rem/1 Outfit,sans-serif;color:var(--ink);
+                 outline:none;transition:border-color .2s;"
+          onfocus="this.style.borderColor='var(--gold)'"
+          onblur="this.style.borderColor='var(--border)'"/>
+        <datalist id="modal-prof-list">
+          <option value="Mohammed Alser"/>
+          <option value="Ashwin Ashok"/>
+          <option value="Bal Abdullah"/>
+          <option value="Xie Bingyi"/>
+          <option value="Esra Akbas"/>
+          <option value="S M Islam"/>
+          <option value="William Johnson"/>
+          <option value="Gao Lan"/>
+          <option value="Mufzur Rahaman"/>
+          <option value="Tushara Sadasivuni"/>
+          <option value="Saliesh Kumar"/>
+          <option value="Hosseini Roya"/>
+        </datalist>
+      </div>
+      <div>
+        <label style="font:600 8px/1 Outfit,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:5px;">Course (optional)</label>
+        <input id="modal-course-input" type="text"
+          placeholder="e.g. CSC 2720 — Data Structures"
+          style="width:100%;background:#fff;border:1px solid var(--border);border-radius:3px;
+                 padding:10px 12px;font:300 .88rem/1 Outfit,sans-serif;color:var(--ink);
+                 outline:none;transition:border-color .2s;"
+          onfocus="this.style.borderColor='var(--gold)'"
+          onblur="this.style.borderColor='var(--border)'"/>
+      </div>
+    </div>
+
+    <div class="star-row" id="star-row">
+      <span class="star" data-v="1">★</span><span class="star" data-v="2">★</span>
+      <span class="star" data-v="3">★</span><span class="star" data-v="4">★</span>
+      <span class="star" data-v="5">★</span>
+    </div>
+    <div class="modal-tags" id="modal-tags"></div>
+    <button class="modal-submit" onclick="submitRating()">Submit Rating</button>
+  </div>
+</div>
+
+<div id="toast"></div>
+<footer>ChromaDB &nbsp;·&nbsp; all-MiniLM-L6-v2 &nbsp;·&nbsp; Groq Llama 3.3 &nbsp;·&nbsp; GSU CS Unofficial Guide</footer>
+
+
+<script>
+/* ═══ DATA ═══ */
+var PROFS = [
+  {id:"alser",   name:"Mohammed Alser",    init:"MA", dept:"Algorithms & Theory", course:"CSC 8210 · Advanced Computer Organization",
+   tags:["lenient grader","engaging","accessible"],
+   scores:{clarity:82,engagement:75,fairness:88,organization:70,accessibility:85},
+   difficulty:35, interest:72, searches:14, comparisons:3},
+  {id:"ashok",   name:"Ashwin Ashok",      init:"AA", dept:"Networks & Systems",  course:"CSC 4120 · Intro to Robotics",
+   tags:["test heavy","accessible via email"],
+   scores:{clarity:68,engagement:72,fairness:65,organization:74,accessibility:78},
+   difficulty:62, interest:65, searches:9, comparisons:2},
+  {id:"bal",     name:"Bal Abdullah",      init:"BA", dept:"Systems Programming", course:"CSC 4520 · Design & Analysis of Algorithms",
+   tags:["mandatory attendance","heavy workload","uses textbook"],
+   scores:{clarity:60,engagement:58,fairness:55,organization:65,accessibility:60},
+   difficulty:75, interest:52, searches:11, comparisons:5},
+  {id:"bingyi",  name:"Xie Bingyi",        init:"XB", dept:"Data Science",        course:"CSC 1302 · Principles of CS II",
+   tags:["good for online","accessible via email"],
+   scores:{clarity:74,engagement:68,fairness:78,organization:80,accessibility:72},
+   difficulty:55, interest:70, searches:7, comparisons:2},
+  {id:"esra",    name:"Esra Akbas",        init:"EA", dept:"AI & Machine Learning",course:"CSC 4850 · Machine Learning",
+   tags:["heavy workload","engaging","test heavy"],
+   scores:{clarity:78,engagement:85,fairness:72,organization:76,accessibility:68},
+   difficulty:78, interest:88, searches:12, comparisons:4},
+  {id:"islam",   name:"S M Islam",         init:"SI", dept:"Data Structures",     course:"CSC 2720 · Data Structures",
+   tags:["clear communicator","engaging","mandatory attendance"],
+   scores:{clarity:92,engagement:88,fairness:80,organization:85,accessibility:90},
+   difficulty:50, interest:90, searches:22, comparisons:8},
+  {id:"johnson", name:"William Johnson",   init:"WJ", dept:"Software Engineering",course:"CSC 3350 · Software Development",
+   tags:["lenient grader","engaging","clear communicator"],
+   scores:{clarity:90,engagement:92,fairness:88,organization:86,accessibility:82},
+   difficulty:40, interest:94, searches:20, comparisons:7},
+  {id:"lan",     name:"Gao Lan",           init:"GL", dept:"Theory & Algorithms", course:"CSC 3210 · Computer Organization",
+   tags:["test heavy","uses textbook"],
+   scores:{clarity:65,engagement:60,fairness:70,organization:68,accessibility:58},
+   difficulty:70, interest:55, searches:6, comparisons:1},
+  {id:"rahman",  name:"Mufzur Rahaman",    init:"MR", dept:"Programming Languages",course:"CSC 3320 · System Level Programming",
+   tags:["accessible via email","good for online"],
+   scores:{clarity:72,engagement:65,fairness:75,organization:70,accessibility:80},
+   difficulty:52, interest:60, searches:8, comparisons:2},
+  {id:"sadasivuni",name:"Tushara Sadasivuni",init:"TS",dept:"Systems & OS",        course:"CSC 4350 · Software Engineering",
+   tags:["heavy workload","mandatory attendance","test heavy"],
+   scores:{clarity:58,engagement:55,fairness:60,organization:62,accessibility:55},
+   difficulty:85, interest:45, searches:10, comparisons:3},
+  {id:"kumar",   name:"Saliesh Kumar",     init:"SK", dept:"Databases",           course:"CSC 2720 · Data Structures",
+   tags:["accessible via email","lenient grader"],
+   scores:{clarity:70,engagement:68,fairness:80,organization:72,accessibility:76},
+   difficulty:45, interest:64, searches:7, comparisons:2},
+  {id:"roya",    name:"Hosseini Roya",     init:"HR", dept:"Cybersecurity",       course:"CSC 4320 · Operating Systems",
+   tags:["engaging","test heavy","heavy workload"],
+   scores:{clarity:75,engagement:80,fairness:68,organization:72,accessibility:70},
+   difficulty:72, interest:80, searches:9, comparisons:3},
+];
+
+var ALL_TAGS = ["mandatory attendance","heavy workload","test heavy","good for online","uses textbook","accessible via email","lenient grader","engaging","clear communicator"];
+var SORT_OPTS = ["highest clarity","most engaging","lowest difficulty","most searched"];
+var HEATMAP_Q = [
+  {q:"Which professor explains concepts most clearly?", heat:3},
+  {q:"Who requires attendance?", heat:2},
+  {q:"Which professor has the heaviest workload?", heat:2},
+  {q:"Who is the most lenient grader?", heat:1},
+  {q:"Who has the best overall reviews?", heat:3},
+  {q:"Whose exams are based on lecture slides?", heat:1},
+  {q:"Which professor is best for online?", heat:2},
+  {q:"Who is most accessible via email?", heat:1},
+  {q:"Who is most engaging in class?", heat:2},
+];
+var MODAL_TAGS = ["clear communicator","engaging","heavy workload","lenient grader","mandatory attendance","test heavy","accessible","good for online"];
+var activeTags = [], activeSort = null, compareList = [], qCount = 0, radarChart = null;
+var currentModalProf = null, modalStar = 0, modalTagsSel = [];
+
+/* ═══ NAVIGATION ═══ */
+function showPage(page, el){
+  ["landing","home","explore","battle","board","chat"].forEach(function(p){
+    var el2 = document.getElementById("page-"+p);
+    if(el2) el2.style.display = p===page ? "block" : "none";
+  });
+  document.querySelectorAll(".nav-tab").forEach(function(t){ t.classList.remove("active"); });
+  if(el) el.classList.add("active");
+  if(page==="explore") buildExplore();
+  if(page==="battle")  buildBattle();
+  if(page==="board")   buildBoard();
+}
+
+/* ═══ TOAST ═══ */
+function toast(msg){
+  var t = document.getElementById("toast");
+  t.textContent = msg; t.classList.add("show");
+  setTimeout(function(){ t.classList.remove("show"); }, 2200);
+}
+
+/* ═══ TAG & SORT FILTERS ═══ */
+(function(){
+  var tr = document.getElementById("tag-filter");
+  if(!tr) return;
+  ALL_TAGS.forEach(function(tag){
+    var el = document.createElement("span");
+    el.className = "tag"; el.textContent = tag;
+    el.onclick = function(){
+      el.classList.toggle("on");
+      var idx = activeTags.indexOf(tag);
+      if(idx>-1) activeTags.splice(idx,1); else activeTags.push(tag);
+      renderCards();
+    };
+    tr.appendChild(el);
+  });
+  var sr = document.getElementById("sort-btns");
+  if(!sr) return;
+  sr.style.cssText = "display:flex;flex-wrap:wrap;gap:6px;";
+  SORT_OPTS.forEach(function(opt){
+    var el = document.createElement("button");
+    el.className = "sort-btn"; el.textContent = opt;
+    el.onclick = function(){
+      document.querySelectorAll(".sort-btn").forEach(function(b){b.classList.remove("on");});
+      if(activeSort===opt){ activeSort=null; }
+      else { activeSort=opt; el.classList.add("on"); }
+      renderCards();
+    };
+    sr.appendChild(el);
+  });
+})();
+
+/* ═══ PROF CARDS ═══ */
+function filteredSorted(){
+  var list = PROFS.slice();
+  if(activeTags.length){
+    list = list.filter(function(p){
+      return activeTags.every(function(t){ return p.tags.indexOf(t)>-1; });
+    });
+  }
+  if(activeSort==="highest clarity")   list.sort(function(a,b){return b.scores.clarity-a.scores.clarity;});
+  if(activeSort==="most engaging")     list.sort(function(a,b){return b.scores.engagement-a.scores.engagement;});
+  if(activeSort==="lowest difficulty") list.sort(function(a,b){return a.difficulty-b.difficulty;});
+  if(activeSort==="most searched")     list.sort(function(a,b){return b.searches-a.searches;});
+  return list;
+}
+
+function renderCards(){
+  var grid = document.getElementById("profs-grid");
+  if(!grid) return;
+  grid.innerHTML = "";
+  var list = filteredSorted();
+  if(!list.length){
+    grid.innerHTML = '<p style="font:300 italic .85rem/1 Outfit,sans-serif;color:var(--muted);padding:12px 0;">No professors match the selected filters.</p>';
+    return;
+  }
+  list.forEach(function(p){
+    var inCmp = compareList.indexOf(p.id)>-1;
+    var card = document.createElement("div");
+    card.className = "prof-card" + (inCmp?" selected-cmp":"");
+    card.id = "card-"+p.id;
+    var tagsHtml = p.tags.map(function(t){return '<span class="prof-tag">'+t+'</span>';}).join("");
+    var barsHtml = [{k:"clarity",label:"Clarity"},{k:"engagement",label:"Engagement"},{k:"fairness",label:"Fairness"}]
+      .map(function(b){
+        var cls = b.k==="engagement"?"sage":"";
+        return '<div class="mini-bar-wrap">'+
+          '<div class="mini-bar-label"><span>'+b.label+'</span><span>'+p.scores[b.k]+'%</span></div>'+
+          '<div class="mini-bar"><div class="mini-bar-fill '+cls+'" style="width:0%" data-w="'+p.scores[b.k]+'%"></div></div>'+
+        '</div>';
+      }).join("");
+    card.innerHTML =
+      '<div class="cmp-check">'+(inCmp?'&#10003;':'')+'</div>'+
+      '<div class="prof-card-top">'+
+        '<div class="prof-av">'+p.init+'</div>'+
+        '<div><div class="prof-name">'+p.name+'</div>'+
+        '<div class="prof-dept">'+p.course+'</div></div>'+
+      '</div>'+
+      '<div class="prof-tags">'+tagsHtml+'</div>'+
+      barsHtml+
+      '<div class="prof-card-actions">'+
+        '<button class="prof-btn" onclick="askAbout(\''+p.id+'\')">Ask</button>'+
+        '<button class="prof-btn cmp'+(inCmp?' added':'')+'" id="cmpbtn-'+p.id+'" onclick="toggleCmp(\''+p.id+'\')">'+
+          (inCmp?'Added':'+ Compare')+
+        '</button>'+
+        '<button class="prof-btn" onclick="openRating(\''+p.id+'\')">Rate</button>'+
+      '</div>';
+    grid.appendChild(card);
+    setTimeout(function(){
+      card.querySelectorAll(".mini-bar-fill").forEach(function(el){
+        el.style.width = el.getAttribute("data-w");
+      });
+    }, 80);
+  });
+}
+renderCards();
+
+/* ═══ COMPARE ═══ */
+function toggleCmp(id){
+  var idx = compareList.indexOf(id);
+  if(idx>-1){
+    compareList.splice(idx,1);
+  } else {
+    if(compareList.length>=3){ toast("Max 3 professors to compare"); return; }
+    compareList.push(id);
+    var cmpEl = document.getElementById("cmp-count");
+    if(cmpEl) cmpEl.textContent = parseInt(cmpEl.textContent)+1;
+    var p = PROFS.find(function(x){return x.id===id;}); if(p) p.comparisons++;
+    toast("Added to compare — go to Battle");
+  }
+  renderCards();
+}
+
+/* ═══ ASK ═══ */
+var CANNED = {
+  "alser":"According to student reviews, Mohammed Alser is known for being a lenient grader. Multiple reviewers highlight that his courses are well-structured and he is responsive to student questions outside class. (Source: prof_Alser.txt)",
+  "islam":"S M Towhidul Islam is most frequently described as explaining concepts clearly in CSC 2720. Reviewers consistently note his patient, step-by-step teaching approach. (Source: prof_Islam.txt)",
+  "johnson":"William Johnson receives the best overall reviews irrespective of course. Students describe him as highly engaging and fair. (Source: prof_Johnson.txt)",
+  "bal":"Students note that Bal Abdullah requires attendance and has a strict attendance policy. (Source: prof_Bal.txt)",
+  "sadasivuni":"Tushara Sadasivuni is described as having the heaviest workload. Reviewers mention frequent assignments and a fast-paced course. (Source: prof_Sadasivuni.txt)",
+};
+var SUGGESTIONS = [
+  "Which professor explains concepts most clearly?",
+  "Who requires attendance?","Which professor has the heaviest workload?",
+  "Who is the most lenient grader?","Which professor has the best overall reviews?",
+  "Whose exams are based on lecture slides?","Who is most accessible via email?",
+  "Which professor is best for online classes?",
+];
+
+function askAbout(id){
+  var p = PROFS.find(function(x){return x.id===id;});
+  if(!p) return;
+  var inp = document.getElementById("search-input");
+  if(inp) inp.value = "What do students say about "+p.name+"?";
+  showPage("home", document.querySelectorAll(".nav-tab")[1]);
+  submitQuestion(id);
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function submitQuestion(profIdHint){
+  var q = (document.getElementById("search-input")||{}).value;
+  if(!q) q = "";
+  q = q.trim();
+  if(!q) return;
+  qCount++; 
+  var qel = document.getElementById("q-count");
+  if(qel) qel.textContent = qCount;
+  var sugBox = document.getElementById("suggestions");
+  if(sugBox) sugBox.style.display="none";
+  var sec = document.getElementById("answer-section");
+  if(sec) sec.style.display="block";
+  var ab = document.getElementById("answer-box");
+  if(ab){ ab.style.opacity="0"; ab.textContent="Searching reviews…"; ab.style.transition="opacity .35s"; setTimeout(function(){ab.style.opacity="1";},50); }
+  setTimeout(function(){
+    var answer = "I don't have enough information in the available reviews to answer that.";
+    var source = "No matching sources found.";
+    var ql = q.toLowerCase();
+    if(profIdHint && CANNED[profIdHint]){ answer=CANNED[profIdHint]; source="Source: prof_"+profIdHint+".txt"; }
+    else if(ql.indexOf("clear")>-1||ql.indexOf("explain")>-1){ answer=CANNED["islam"]; source="Source: prof_Islam.txt"; }
+    else if(ql.indexOf("attendance")>-1){ answer=CANNED["bal"]; source="Source: prof_Bal.txt"; }
+    else if(ql.indexOf("workload")>-1||ql.indexOf("heavy")>-1){ answer=CANNED["sadasivuni"]; source="Source: prof_Sadasivuni.txt"; }
+    else if(ql.indexOf("lenient")>-1||ql.indexOf("grading")>-1){ answer=CANNED["alser"]; source="Source: prof_Alser.txt"; }
+    else if(ql.indexOf("best")>-1||ql.indexOf("overall")>-1){ answer=CANNED["johnson"]; source="Source: prof_Johnson.txt"; }
+    else if(ql.indexOf("islam")>-1){ answer=CANNED["islam"]; source="Source: prof_Islam.txt"; }
+    else if(ql.indexOf("johnson")>-1){ answer=CANNED["johnson"]; source="Source: prof_Johnson.txt"; }
+    else if(ql.indexOf("alser")>-1){ answer=CANNED["alser"]; source="Source: prof_Alser.txt"; }
+    if(ab){ ab.style.opacity="0"; setTimeout(function(){ ab.textContent=answer; ab.style.opacity="1"; },300); }
+    var sbx = document.getElementById("source-box");
+    if(sbx) sbx.textContent=source;
+    var mentioned = PROFS.filter(function(p){ return q.toLowerCase().indexOf(p.name.split(" ").pop().toLowerCase())>-1; });
+    mentioned.forEach(function(p){ p.searches++; });
+    if(sec) sec.scrollIntoView({behavior:"smooth",block:"nearest"});
+  }, 900);
+}
+
+var askBtnEl = document.getElementById("ask-btn");
+if(askBtnEl) askBtnEl.addEventListener("click",function(){ submitQuestion(null); });
+var searchInp = document.getElementById("search-input");
+if(searchInp){
+  searchInp.addEventListener("keydown",function(e){ if(e.key==="Enter") submitQuestion(null); });
+  searchInp.addEventListener("input",function(){
+    var v = this.value.toLowerCase();
+    var box = document.getElementById("suggestions");
+    if(!box) return;
+    if(!v){ box.style.display="none"; return; }
+    var matches = SUGGESTIONS.filter(function(s){ return s.toLowerCase().indexOf(v)>-1; }).slice(0,5);
+    var profMatches = PROFS.filter(function(p){ return p.name.toLowerCase().indexOf(v)>-1; }).slice(0,3)
+      .map(function(p){ return "What do students say about "+p.name+"?"; });
+    var all = matches.concat(profMatches).slice(0,6);
+    if(!all.length){ box.style.display="none"; return; }
+    box.innerHTML = all.map(function(s){
+      var hi = s.replace(new RegExp("("+v.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+")", "gi"), "<strong>$1</strong>");
+      return '<div class="sugg-item" onclick="pickSugg(\''+s.replace(/'/g,"\\'")+'\')">'+ hi +'</div>';
+    }).join("");
+    box.style.display="block";
+  });
+}
+document.addEventListener("click",function(e){
+  if(!e.target.closest(".search-row")){ var b=document.getElementById("suggestions"); if(b) b.style.display="none"; }
+});
+function pickSugg(s){
+  var inp=document.getElementById("search-input");
+  if(inp) inp.value=s;
+  var box=document.getElementById("suggestions");
+  if(box) box.style.display="none";
+  submitQuestion(null);
+}
+
+/* ═══ EXPLORE ═══ */
+var exploreCharts = {};
+function buildExplore(){
+  var grid = document.getElementById("explore-grid");
+  if(!grid||grid.dataset.built) return;
+  grid.dataset.built="1";
+  PROFS.forEach(function(p){
+    var card = document.createElement("div");
+    card.className = "explore-card";
+    var cid = "radar-"+p.id;
+    var sliders = [
+      {label:"Difficulty", lo:"Very Easy", hi:"Very Hard", val:p.difficulty, color:"var(--rust)"},
+      {label:"Interest",   lo:"Skip it",   hi:"Must-Take", val:p.interest,   color:"var(--sage)"},
+    ].map(function(s){
+      return '<div class="slider-row">'+
+        '<div class="slider-header"><span>'+s.label+'</span><span>'+s.val+'%</span></div>'+
+        '<div class="slider-track"><div class="slider-fill" style="width:0%;background:'+s.color+'" data-w="'+s.val+'%"></div>'+
+        '<div class="slider-thumb" style="left:0%;background:'+s.color+'" data-w="'+s.val+'%"></div></div>'+
+        '<div class="vibe-labels"><span>'+s.lo+'</span><span>'+s.hi+'</span></div>'+
+      '</div>';
+    }).join("");
+    card.innerHTML =
+      '<div class="ec-header"><div class="ec-av">'+p.init+'</div>'+
+      '<div><div class="ec-name">'+p.name+'</div>'+
+      '<div class="ec-dept">'+p.course+'</div></div></div>'+
+      '<div class="radar-wrap"><canvas id="'+cid+'"></canvas></div>'+
+      sliders+
+      '<div class="ec-actions">'+
+        '<button class="ec-btn" onclick="askAbout(\''+p.id+'\')">Ask</button>'+
+        '<button class="ec-btn ghost" onclick="openRating(\''+p.id+'\')">Rate</button>'+
+      '</div>';
+    grid.appendChild(card);
+    setTimeout(function(){
+      card.querySelectorAll(".slider-fill").forEach(function(el){ el.style.width=el.getAttribute("data-w"); });
+      card.querySelectorAll(".slider-thumb").forEach(function(el){ el.style.left=el.getAttribute("data-w"); });
+      var ctx = document.getElementById(cid);
+      if(!ctx) return;
+      exploreCharts[p.id] = new Chart(ctx.getContext("2d"),{
+        type:"radar",
+        data:{
+          labels:["Clarity","Engagement","Fairness","Organization","Accessibility"],
+          datasets:[{data:[p.scores.clarity,p.scores.engagement,p.scores.fairness,p.scores.organization,p.scores.accessibility],
+            backgroundColor:"#c9a84c22",borderColor:"#c9a84c",borderWidth:2,pointBackgroundColor:"#c9a84c",pointRadius:3}]
+        },
+        options:{responsive:true,maintainAspectRatio:false,
+          scales:{r:{min:0,max:100,ticks:{display:false},grid:{color:"#e2ddd5"},
+            pointLabels:{font:{family:"Outfit",size:9},color:"#9a9080"}}},
+          plugins:{legend:{display:false}}}
+      });
+    }, 120);
+  });
+}
+
+/* ═══ BATTLE ═══ */
+var BATTLE_COLORS = ["#c9a84c","#4a7c59","#b94040"];
+function buildBattle(){
+  var slots = document.getElementById("battle-slots");
+  var pick  = document.getElementById("battle-pick");
+  if(!slots||!pick) return;
+  slots.innerHTML=""; pick.innerHTML="";
+  PROFS.forEach(function(p){
+    var btn = document.createElement("button");
+    btn.className = "sort-btn" + (compareList.indexOf(p.id)>-1?" on":"");
+    btn.textContent = p.name.split(" ").pop();
+    btn.onclick = function(){
+      var idx=compareList.indexOf(p.id);
+      if(idx>-1){ compareList.splice(idx,1); btn.classList.remove("on"); }
+      else if(compareList.length<3){ compareList.push(p.id); btn.classList.add("on"); }
+      else { toast("Max 3 professors"); return; }
+      buildBattle();
+    };
+    pick.appendChild(btn);
+  });
+  for(var i=0;i<3;i++){
+    var slot=document.createElement("div");
+    slot.className="battle-slot";
+    var pid=compareList[i];
+    if(pid){
+      var p=PROFS.find(function(x){return x.id===pid;});
+      slot.classList.add("filled");
+      slot.innerHTML='<div class="slot-av" style="background:'+BATTLE_COLORS[i]+'20;color:'+BATTLE_COLORS[i]+';">'+p.init+'</div>'+
+        '<div class="slot-name">'+p.name+'</div>'+
+        '<div class="slot-remove" onclick="removeCmp(\''+p.id+'\')">Remove</div>';
+    } else {
+      slot.innerHTML='<div class="slot-empty">+ Select a professor</div>';
+    }
+    slots.appendChild(slot);
+  }
+  if(compareList.length>=2){
+    var runBtn=document.createElement("button");
+    runBtn.className="search-btn"; runBtn.style.marginTop="12px";
+    runBtn.textContent="Run Battle →";
+    runBtn.onclick=runBattle;
+    pick.appendChild(runBtn);
+  }
+}
+function removeCmp(id){
+  compareList=compareList.filter(function(x){return x!==id;});
+  renderCards(); buildBattle();
+}
+function runBattle(){
+  var res=document.getElementById("battle-result");
+  if(!res) return;
+  res.style.display="block";
+  var profs=compareList.map(function(id){return PROFS.find(function(p){return p.id===id;});}).filter(Boolean);
+  var cmpEl=document.getElementById("cmp-count");
+  if(cmpEl) cmpEl.textContent=parseInt(cmpEl.textContent)+1;
+  profs.forEach(function(p){p.comparisons++;});
+  var winner=profs.reduce(function(a,b){
+    var sa=Object.values(a.scores).reduce(function(x,y){return x+y;},0);
+    var sb=Object.values(b.scores).reduce(function(x,y){return x+y;},0);
+    return sa>sb?a:b;
+  });
+  var wb=document.getElementById("winner-banner");
+  if(wb) wb.innerHTML='&#127942; &nbsp; <em>'+winner.name+'</em> &nbsp; wins the battle';
+  if(radarChart) radarChart.destroy();
+  var ctx=document.getElementById("battle-radar-canvas");
+  if(ctx) radarChart=new Chart(ctx.getContext("2d"),{
+    type:"radar",
+    data:{labels:["Clarity","Engagement","Fairness","Organization","Accessibility"],
+      datasets:profs.map(function(p,i){return{
+        label:p.name.split(" ").pop(),
+        data:[p.scores.clarity,p.scores.engagement,p.scores.fairness,p.scores.organization,p.scores.accessibility],
+        backgroundColor:BATTLE_COLORS[i]+"22",borderColor:BATTLE_COLORS[i],borderWidth:2,
+        pointBackgroundColor:BATTLE_COLORS[i],pointRadius:4};})},
+    options:{responsive:true,maintainAspectRatio:false,
+      scales:{r:{min:0,max:100,ticks:{display:false},grid:{color:"#e2ddd5"},
+        pointLabels:{font:{family:"Outfit",size:10},color:"#9a9080"}}},
+      plugins:{legend:{position:"bottom",labels:{font:{family:"Outfit",size:10},boxWidth:12}}}}
+  });
+  var barsEl=document.getElementById("battle-bars");
+  if(barsEl){
+    barsEl.innerHTML="";
+    ["Clarity","Engagement","Fairness","Organization","Accessibility"].forEach(function(cat,ci){
+      var key=cat.toLowerCase();
+      var row=document.createElement("div");
+      row.className="battle-bar-row";
+      row.innerHTML='<div class="battle-bar-label">'+cat+'</div>'+
+        '<div class="battle-bars-inner">'+
+        profs.map(function(p,pi){
+          return '<div class="b-bar"><span class="b-bar-name">'+p.name.split(" ").pop()+'</span>'+
+            '<div class="b-bar-track"><div class="b-bar-fill" style="width:0%;background:'+BATTLE_COLORS[pi]+'" data-w="'+p.scores[key]+'%"></div></div>'+
+            '<span class="b-bar-val">'+p.scores[key]+'</span></div>';
+        }).join("")+
+      '</div>';
+      barsEl.appendChild(row);
+      setTimeout(function(){ row.querySelectorAll(".b-bar-fill").forEach(function(el){ el.style.width=el.getAttribute("data-w"); }); }, 80+ci*60);
+    });
+  }
+  res.scrollIntoView({behavior:"smooth",block:"start"});
+  toast("Battle complete!");
+}
+
+/* ═══ LEADERBOARD ═══ */
+function buildBoard(){
+  var grid=document.getElementById("board-grid");
+  if(!grid) return;
+  grid.innerHTML="";
+  [{title:"Most searched",key:"searches",suffix:"searches"},
+   {title:"Most compared",key:"comparisons",suffix:"battles"},
+   {title:"Highest clarity",key:function(p){return p.scores.clarity;},suffix:"/ 100"},
+   {title:"Most engaging",key:function(p){return p.scores.engagement;},suffix:"/ 100"},
+  ].forEach(function(b){
+    var sorted=PROFS.slice().sort(function(a,x){
+      var va=typeof b.key==="function"?b.key(a):a[b.key];
+      var vx=typeof b.key==="function"?b.key(x):x[b.key];
+      return vx-va;
+    }).slice(0,4);
+    var card=document.createElement("div");
+    card.className="board-card";
+    card.innerHTML='<div class="board-title">'+b.title+'</div>'+
+      sorted.map(function(p,i){
+        var val=typeof b.key==="function"?b.key(p):p[b.key];
+        return '<div class="board-row"><span class="board-rank">'+(i+1)+'</span>'+
+          '<div class="board-av">'+p.init+'</div>'+
+          '<span class="board-name">'+p.name.split(" ").pop()+'</span>'+
+          '<span class="board-val">'+val+' '+b.suffix+'</span></div>';
+      }).join("");
+    grid.appendChild(card);
+  });
+  var hm=document.getElementById("heatmap");
+  if(hm){
+    hm.innerHTML="";
+    HEATMAP_Q.slice().sort(function(a,b){return b.heat-a.heat;}).forEach(function(hq){
+      var el=document.createElement("div");
+      el.className="hq-item"+(hq.heat>=3?" hot":hq.heat>=2?" warm":"");
+      el.textContent=hq.q;
+      el.onclick=function(){
+        var inp=document.getElementById("search-input");
+        if(inp) inp.value=hq.q;
+        showPage("home",document.querySelectorAll(".nav-tab")[1]);
+        submitQuestion(null);
+      };
+      hm.appendChild(el);
+    });
+  }
+}
+
+/* ═══ RATING MODAL ═══ */
+function openRating(id){
+  currentModalProf = id ? PROFS.find(function(p){return p.id===id;}) : null;
+  var name = currentModalProf ? currentModalProf.name : "a Professor";
+  var nameEl = document.getElementById("modal-prof-name");
+  if(nameEl) nameEl.textContent = name;
+  var bg = document.getElementById("modal-bg");
+  if(bg) bg.classList.add("open");
+  modalStar=0; modalTagsSel=[];
+  var pi=document.getElementById("modal-prof-input");
+  if(pi) pi.value = currentModalProf ? currentModalProf.name : "";
+  var ci=document.getElementById("modal-course-input");
+  if(ci) ci.value = "";
+  document.querySelectorAll(".star").forEach(function(s){s.classList.remove("lit");});
+  var mt = document.getElementById("modal-tags");
+  if(!mt) return;
+  mt.innerHTML="";
+  MODAL_TAGS.forEach(function(tag){
+    var el=document.createElement("span");
+    el.className="modal-tag"; el.textContent=tag;
+    el.onclick=function(){
+      el.classList.toggle("on");
+      var idx=modalTagsSel.indexOf(tag);
+      if(idx>-1) modalTagsSel.splice(idx,1); else modalTagsSel.push(tag);
+    };
+    mt.appendChild(el);
+  });
+  document.querySelectorAll(".star").forEach(function(s){
+    s.onclick=function(){
+      modalStar=parseInt(s.dataset.v);
+      document.querySelectorAll(".star").forEach(function(ss){
+        ss.classList.toggle("lit",parseInt(ss.dataset.v)<=modalStar);
+      });
+    };
+  });
+}
+function closeModal(){ var bg=document.getElementById("modal-bg"); if(bg) bg.classList.remove("open"); }
+function submitRating(){
+  var profInput=document.getElementById("modal-prof-input");
+  var profName=(profInput&&profInput.value.trim())||"";
+  if(!profName){ toast("Please enter the professor name"); if(profInput){profInput.style.borderColor="var(--rust)";setTimeout(function(){profInput.style.borderColor="var(--border)";},1800);} return; }
+  if(!modalStar){ toast("Please select a star rating"); return; }
+  var course=(document.getElementById("modal-course-input")||{}).value||"";
+  var rc=document.getElementById("review-count");
+  if(rc) rc.textContent=parseInt(rc.textContent)+1;
+  closeModal();
+  toast("Rating submitted for "+profName+" — thank you!");
+  if(currentModalProf){
+    currentModalProf.scores.clarity=Math.min(100,Math.round((currentModalProf.scores.clarity+modalStar*18)/2));
+    renderCards();
+  }
+}
+var modalBg = document.getElementById("modal-bg");
+if(modalBg) modalBg.addEventListener("click",function(e){ if(e.target===this) closeModal(); });
+
+/* ═══ AI CHAT PAGE ═══ */
+var CHAT_CHIPS=[
+  "Which professor explains concepts most clearly?",
+  "Who requires attendance?",
+  "Which professor has the heaviest workload?",
+  "Who is the most lenient grader?",
+  "Who has the best overall reviews?",
+  "Whose exams are based on lecture slides?",
+];
+var CHAT_PROFS=[
+  {name:"Mohammed Alser",init:"MA",q:"What do students say about Mohammed Alser?"},
+  {name:"Ashwin Ashok",  init:"AA",q:"What is Ashwin Ashok known for?"},
+  {name:"Bal Abdullah",  init:"BA",q:"Does Bal Abdullah require attendance?"},
+  {name:"Xie Bingyi",    init:"XB",q:"What do students say about Xie Bingyi?"},
+  {name:"Esra Akbas",    init:"EA",q:"What is Esra Akbas like as a professor?"},
+  {name:"S M Islam",     init:"SI",q:"Which professor for CSC 2720 explains concepts most clearly?"},
+  {name:"William Johnson",init:"WJ",q:"What makes William Johnson stand out?"},
+  {name:"Gao Lan",       init:"GL",q:"What do students say about Gao Lan's workload?"},
+  {name:"Mufzur Rahaman",init:"MR",q:"What is Mufzur Rahaman like?"},
+  {name:"Tushara Sadasivuni",init:"TS",q:"Is Tushara Sadasivuni's workload heavy?"},
+  {name:"Saliesh Kumar", init:"SK",q:"What do students say about Saliesh Kumar?"},
+  {name:"Hosseini Roya", init:"HR",q:"What are reviews of Hosseini Roya like?"},
+];
+(function(){
+  var chips=document.getElementById("chat-chips");
+  if(chips) CHAT_CHIPS.forEach(function(q){
+    var el=document.createElement("div");
+    el.className="chat-chip"; el.textContent=q;
+    el.onclick=function(){ chatSubmit(q); };
+    chips.appendChild(el);
+  });
+  // Build FAQ cards
+  var FAQ = [
+    {
+      num: "01",
+      q: "Which professor for CSC 2720 is most frequently described as explaining concepts clearly?",
+      tag: "Course · CSC 2720"
+    },
+    {
+      num: "02",
+      q: "Which professor requires attendance according to student reviews?",
+      tag: "Policy · Attendance"
+    },
+    {
+      num: "03",
+      q: "Which professor is described as having a heavy workload?",
+      tag: "Workload · Difficulty"
+    },
+    {
+      num: "04",
+      q: "Which professor is lenient in grading?",
+      tag: "Grading · Policy"
+    },
+    {
+      num: "05",
+      q: "Which professor has the best reviews irrespective of the course?",
+      tag: "Overall · Rating"
+    },
+    {
+      num: "06",
+      q: "Which professor's exams are primarily based on lecture slides?",
+      tag: "Exams · Study Tips"
+    },
+  ];
+  var faqList = document.getElementById("faq-list");
+  if(faqList) FAQ.forEach(function(f){
+    var card = document.createElement("div");
+    card.style.cssText =
+      "display:flex;align-items:center;gap:14px;padding:12px 16px;" +
+      "background:#fff;border:1px solid var(--border);border-radius:3px;" +
+      "cursor:pointer;transition:border-color .18s,background .18s,transform .12s;";
+    card.innerHTML =
+      '<span style="font:700 1rem/1 Playfair Display,serif;color:#e2ddd5;flex-shrink:0;width:24px;">'+f.num+'</span>'+
+      '<div style="flex:1;">'+
+        '<div style="font:400 .88rem/1.4 Outfit,sans-serif;color:var(--ink);">'+f.q+'</div>'+
+        '<div style="font:500 8px/1 Outfit,sans-serif;letter-spacing:.1em;text-transform:uppercase;'+
+             'color:var(--muted);margin-top:5px;">'+f.tag+'</div>'+
+      '</div>'+
+      '<span style="font:600 9px/1 Outfit,sans-serif;letter-spacing:.1em;text-transform:uppercase;'+
+           'color:var(--gold);flex-shrink:0;">Ask →</span>';
+    card.addEventListener("mouseenter", function(){
+      this.style.borderColor="var(--gold)";
+      this.style.background="var(--warm)";
+      this.style.transform="translateX(3px)";
+    });
+    card.addEventListener("mouseleave", function(){
+      this.style.borderColor="var(--border)";
+      this.style.background="#fff";
+      this.style.transform="translateX(0)";
+    });
+    card.onclick = function(){ chatSubmit(f.q); };
+    faqList.appendChild(card);
+  });
+
+  var pr=document.getElementById("chat-prof-row");
+  if(pr) CHAT_PROFS.forEach(function(p){
+    var el=document.createElement("div");
+    el.className="chat-prof-pill";
+    el.innerHTML='<div class="chat-prof-av">'+p.init+'</div><span class="chat-prof-name">'+p.name+'</span>';
+    el.onclick=function(){ chatSubmit(p.q); };
+    pr.appendChild(el);
+  });
+})();
+
+function chatSend(){
+  var inp=document.getElementById("chat-input");
+  if(!inp) return;
+  var q=inp.value.trim();
+  if(!q) return;
+  inp.value="";
+  chatSubmit(q);
+}
+document.addEventListener("keydown",function(e){
+  var chatPage=document.getElementById("page-chat");
+  if(e.key==="Enter"&&chatPage&&chatPage.style.display!=="none"){
+    var inp=document.getElementById("chat-input");
+    if(document.activeElement===inp) chatSend();
+  }
+});
+function chatSubmit(q){
+  addChatMsg("user",q,null);
+  var typing=document.getElementById("chat-typing");
+  if(typing) typing.classList.add("active");
+  var sendBtn=document.getElementById("chat-send-btn");
+  if(sendBtn) sendBtn.disabled=true;
+  scrollChat();
+  fetch("/ask",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({question:q})})
+  .then(function(r){return r.json();})
+  .then(function(data){
+    if(typing) typing.classList.remove("active");
+    if(sendBtn) sendBtn.disabled=false;
+    if(data.error){ addChatMsg("bot","Sorry, something went wrong: "+data.error,null); }
+    else{
+      var srcs=data.sources.map(function(s){return s.replace("prof_","").replace(".txt","");}).join(", ");
+      addChatMsg("bot",data.answer,"Sources: "+srcs);
+    }
+    qCount++; var qel=document.getElementById("q-count"); if(qel) qel.textContent=qCount;
+    scrollChat();
+  })
+  .catch(function(){
+    if(typing) typing.classList.remove("active");
+    if(sendBtn) sendBtn.disabled=false;
+    addChatMsg("bot","Could not reach the server. Make sure app.py is running.",null);
+    scrollChat();
+  });
+}
+function addChatMsg(role,text,source){
+  var list=document.getElementById("chat-messages");
+  if(!list) return;
+  var msg=document.createElement("div");
+  msg.className="chat-msg "+role;
+  var av=role==="bot"?'<div class="chat-av bot">AI</div>':'<div class="chat-av user">You</div>';
+  var srcHtml=source?'<div class="chat-source">'+source+'</div>':"";
+  msg.innerHTML=av+'<div class="chat-bubble">'+text.replace(/\n/g,"<br>")+srcHtml+'</div>';
+  list.appendChild(msg);
+}
+function scrollChat(){ var l=document.getElementById("chat-messages"); if(l) l.scrollTop=l.scrollHeight; }
+function clearChat(){
+  var l=document.getElementById("chat-messages");
+  if(!l) return;
+  l.innerHTML='<div class="chat-msg bot"><div class="chat-av bot">AI</div>'+
+    '<div class="chat-bubble">Chat cleared. Ask me anything about GSU CS professors!</div></div>';
+}
+</script>
+
+
+<!-- ═══════════════ AI CHAT PAGE ═══════════════ -->
+<style>
+#page-chat{ background:var(--paper); }
+.chat-wrap{ max-width:700px; margin:0 auto; padding:36px 24px 60px; }
+.chat-header{ border-bottom:1px solid var(--border); padding-bottom:20px; margin-bottom:24px; }
+.chat-eyebrow{ font:600 8px/1 'Outfit',sans-serif; letter-spacing:.22em; text-transform:uppercase; color:var(--gold); display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+.chat-eyebrow::after{ content:''; flex:1; height:1px; background:var(--border); }
+.chat-title{ font:700 1.8rem/1.1 'Playfair Display',serif; color:var(--ink); margin-bottom:6px; }
+.chat-title em{ font-style:italic; color:var(--gold); }
+.chat-sub{ font:300 .85rem/1.6 'Outfit',sans-serif; color:var(--muted); }
+/* how it works mini strip */
+.chat-steps{ display:flex; gap:0; border:1px solid var(--border); border-radius:3px; overflow:hidden; margin-bottom:22px; }
+.chat-step{ flex:1; padding:12px 10px; text-align:center; border-right:1px solid var(--border); transition:background .2s; }
+.chat-step:last-child{ border-right:none; }
+.chat-step:hover{ background:var(--warm); }
+.chat-step-num{ width:20px; height:20px; border-radius:50%; background:var(--ink); color:var(--gold); font:600 8px/20px 'Outfit',sans-serif; text-align:center; margin:0 auto 6px; display:block; }
+.chat-step-lbl{ font:600 9px/1.3 'Outfit',sans-serif; color:var(--ink); }
+.chat-step-dsc{ font:300 8px/1.4 'Outfit',sans-serif; color:var(--muted); margin-top:2px; }
+/* message list */
+.chat-messages{ display:flex; flex-direction:column; gap:14px; margin-bottom:20px; min-height:120px; }
+.chat-msg{ display:flex; gap:10px; align-items:flex-start; animation:msgIn .3s ease; }
+@keyframes msgIn{ from{opacity:0;transform:translateY(8px);} to{opacity:1;transform:translateY(0);} }
+.chat-msg.user{ flex-direction:row-reverse; }
+.chat-av{ width:28px; height:28px; border-radius:3px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font:600 8px/1 'Outfit',sans-serif; }
+.chat-av.bot{ background:var(--ink); color:var(--gold); }
+.chat-av.user{ background:var(--gold); color:var(--ink); }
+.chat-bubble{ max-width:80%; padding:12px 16px; border-radius:3px; font:300 .88rem/1.75 'Outfit',sans-serif; }
+.chat-msg.bot .chat-bubble{ background:#fff; border:1px solid var(--border); border-left:3px solid var(--gold); color:var(--ink2); }
+.chat-msg.user .chat-bubble{ background:var(--ink); color:#e8e4dc; }
+.chat-source{ font:600 8px/1 'Outfit',sans-serif; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin-top:8px; padding-top:8px; border-top:1px solid var(--border); }
+/* typing indicator */
+.chat-typing{ display:none; align-items:center; gap:10px; padding:4px 0; }
+.chat-typing.active{ display:flex; }
+.typing-dots{ display:flex; gap:4px; }
+.typing-dot{ width:6px; height:6px; border-radius:50%; background:var(--muted); animation:typingBounce 1.2s ease-in-out infinite; }
+.typing-dot:nth-child(2){ animation-delay:.2s; }
+.typing-dot:nth-child(3){ animation-delay:.4s; }
+@keyframes typingBounce{ 0%,60%,100%{transform:translateY(0);} 30%{transform:translateY(-6px);} }
+/* input row */
+.chat-input-row{ display:flex; gap:8px; }
+#chat-input{ flex:1; background:#fff; border:1px solid var(--border); border-radius:3px; padding:12px 16px; font:300 .9rem/1 'Outfit',sans-serif; color:var(--ink); outline:none; transition:border-color .2s,box-shadow .2s; }
+#chat-input:focus{ border-color:var(--gold); box-shadow:0 0 0 3px #c9a84c14; }
+#chat-input::placeholder{ color:#c0bab2; font-style:italic; }
+#chat-send-btn{ background:var(--ink); border:2px solid var(--ink); border-radius:3px; color:#fff; font:600 9px/1 'Outfit',sans-serif; letter-spacing:.14em; text-transform:uppercase; padding:0 22px; cursor:pointer; white-space:nowrap; transition:background .2s,border-color .2s,transform .15s; }
+#chat-send-btn:hover{ background:var(--gold); border-color:var(--gold); color:var(--ink); transform:translateY(-1px); }
+#chat-send-btn:disabled{ opacity:.4; cursor:not-allowed; transform:none; }
+/* quick chips */
+.chat-chips{ display:flex; flex-wrap:wrap; gap:6px; margin-bottom:16px; }
+.chat-chip{ background:var(--warm); border:1px solid var(--border); border-radius:2px; color:var(--slate); font:400 .78rem/1 'Outfit',sans-serif; padding:6px 12px; cursor:pointer; transition:background .15s,border-color .15s,color .15s; }
+.chat-chip:hover{ background:var(--gold); border-color:var(--gold); color:var(--ink); }
+/* prof pills */
+.chat-prof-row{ display:flex; flex-wrap:wrap; gap:5px; margin-bottom:18px; }
+.chat-prof-pill{ display:flex; align-items:center; gap:6px; padding:4px 10px 4px 4px; background:var(--paper); border:1px solid var(--border); border-radius:3px; cursor:pointer; transition:border-color .15s,background .15s,transform .12s; }
+.chat-prof-pill:hover{ border-color:var(--gold); background:var(--warm); transform:translateY(-1px); }
+.chat-prof-av{ width:18px; height:18px; border-radius:2px; background:var(--ink); display:flex; align-items:center; justify-content:center; font:600 7px/1 'Outfit',sans-serif; color:var(--gold); flex-shrink:0; }
+.chat-prof-name{ font:400 10px/1 'Outfit',sans-serif; color:var(--slate); }
+</style>
+
+<div id="page-chat">
+  <div class="chat-wrap">
+    <div class="chat-header">
+      <div class="chat-eyebrow">AI-Powered &nbsp; Grounded Answers</div>
+      <div class="chat-title">Ask the <em>Guide</em></div>
+      <p class="chat-sub">Every answer is grounded in real student reviews.</p>
+    </div>
+
+    <div class="chat-steps">
+      <div class="chat-step"><span class="chat-step-num">01</span><div class="chat-step-lbl">You ask</div><div class="chat-step-dsc">Plain English</div></div>
+      <div class="chat-step"><span class="chat-step-num">02</span><div class="chat-step-lbl">Retrieve</div><div class="chat-step-dsc">Top-5 review chunks</div></div>
+      <div class="chat-step"><span class="chat-step-num">03</span><div class="chat-step-lbl">Generate</div><div class="chat-step-dsc">Groq Llama 3.3</div></div>
+      <div class="chat-step"><span class="chat-step-num">04</span><div class="chat-step-lbl">Cite</div><div class="chat-step-dsc">Sources always shown</div></div>
+    </div>
+
+    <!-- FAQ Section -->
+    <div style="margin-bottom:22px;">
+      <div style="font:600 8px/1 Outfit,sans-serif;letter-spacing:.2em;text-transform:uppercase;
+                  color:var(--muted);display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+        Frequently asked questions
+        <span style="flex:1;height:1px;background:var(--border);"></span>
+      </div>
+      <div id="faq-list" style="display:flex;flex-direction:column;gap:8px;"></div>
+    </div>
+
+    <div style="font:600 8px/1 'Outfit',sans-serif;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">Or pick a topic</div>
+    <div class="chat-chips" id="chat-chips"></div>
+
+    <div style="font:600 8px/1 'Outfit',sans-serif;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">Ask about a professor</div>
+    <div class="chat-prof-row" id="chat-prof-row"></div>
+
+    <div style="font:600 8px/1 'Outfit',sans-serif;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:8px;">
+      Conversation
+      <span style="flex:1;height:1px;background:var(--border);"></span>
+      <span onclick="clearChat()" style="cursor:pointer;color:var(--muted);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;transition:color .15s;" onmouseover="this.style.color='var(--rust)'" onmouseout="this.style.color='var(--muted)'">Clear</span>
+    </div>
+
+    <div class="chat-messages" id="chat-messages">
+      <div class="chat-msg bot">
+        <div class="chat-av bot">AI</div>
+        <div class="chat-bubble">
+          Hi! I'm the GSU CS Professor Guide. Ask me anything about your professors — teaching style, workload, grading, attendance policies, and more. I'll answer using only real student reviews.
+        </div>
+      </div>
+    </div>
+
+    <div class="chat-typing" id="chat-typing">
+      <div class="chat-av bot">AI</div>
+      <div class="typing-dots">
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+      </div>
+    </div>
+
+    <div class="chat-input-row">
+      <input id="chat-input" type="text" placeholder="Ask about any professor…" autocomplete="off"/>
+      <button id="chat-send-btn" onclick="chatSend()">Send →</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

@@ -115,22 +115,6 @@ I chose Georgia State University's (GSU) Computer Science department professor r
 
 This architecture follows a standard Retrieval-Augmented Generation (RAG) pipeline. First, professor reviews are ingested and chopped up, then embedded with the all-MiniLM-L6-v2 model. Next, the embeddings go into ChromaDB. This DB finds the best matching pieces for your query. Finally, Groq's Llama 3.3 model generates answers shown via Gradio.
 
-flowchart LR
-    A["📄 Document Ingestion\n──────────────\nTool: Python\nos & open()\n──────────────\n12 .txt files\n1 per professor\nRateMyProfessors"]
-    B["✂️ Chunking\n──────────────\nTool: Python\nchunk_text()\n──────────────\nSize: 500 chars\nOverlap: 100 chars\nTagged w/ prof name"]
-    C["🧠 Embedding +\nVector Store\n──────────────\nModel: MiniLM-L6-v2\nLib: sentence-transformers\nDB: ChromaDB (local)\n384-dim vectors"]
-    D["🔍 Retrieval\n──────────────\nTool: ChromaDB\nquery()\n──────────────\nTop-k = 5 chunks\nCosine similarity\nSource metadata kept"]
-    E["💬 Generation\n──────────────\nTool: LLM + Gradio\n──────────────\nGrounded prompt\nCites source\nRefuses if no evidence"]
-
-    A --> B --> C --> D --> E
-
-    style A fill:#dbeafe,stroke:#3b82f6
-    style B fill:#ede9fe,stroke:#8b5cf6
-    style C fill:#dcfce7,stroke:#22c55e
-    style D fill:#ffedd5,stroke:#f97316
-    style E fill:#fee2e2,stroke:#ef4444
-
----
 
 ## AI Tool Plan
 

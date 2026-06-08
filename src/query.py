@@ -14,14 +14,14 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# Configuration
+# ── Configuration ─────────────────────────────────────────────────────────────
 CHROMA_DIR   = os.path.join("data", "chroma_db")
 COLLECTION   = "gsu_professor_reviews"
 EMBED_MODEL  = "all-MiniLM-L6-v2"
 TOP_K        = 5
 GROQ_MODEL   = "llama-3.3-70b-versatile"
 
-# Lazy-loaded singletons (avoid reloading on every query) 
+# ── Lazy-loaded singletons (avoid reloading on every query) ───────────────────
 _embed_model  = None
 _chroma_col   = None
 _groq_client  = None
@@ -55,21 +55,42 @@ def _get_groq() -> Groq:
     return _groq_client
 
 
-# Retrieval
-def retrieve(query: str, top_k: int = TOP_K) -> list[dict]:
+# ── Retrieval ─────────────────────────────────────────────────────────────────
+def retrieve(query: str, top_k: int = TOP_K, professor: str = None) -> list[dict]:
     """
     Embed the query and return the top_k most similar chunks with metadata.
     Each result dict has: text, source, chunk_index, distance.
+
+    Optional metadata filtering:
+      professor — restrict results to a specific professor's source file.
+                  Pass the filename prefix e.g. "prof_Islam" or "prof_Bal".
+                  This is a Stage 4 metadata filter applied inside ChromaDB
+                  before cosine similarity ranking, so only chunks from that
+                  professor are considered. Useful for targeted queries like
+                  "Is Professor Islam good at explaining?" where you already
+                  know which professor you're asking about.
     """
     model      = _get_embed_model()
     collection = _get_collection()
 
     query_vec = model.encode([query]).tolist()
-    results   = collection.query(
+
+    # Build optional where clause for metadata filtering
+    where = None
+    if professor:
+        # ChromaDB metadata filter: source field must contain the professor filename
+        # e.g. professor="prof_Islam" matches source="prof_Islam.txt"
+        where = {"source": {"$eq": f"{professor}.txt"}}
+
+    query_kwargs = dict(
         query_embeddings = query_vec,
         n_results        = top_k,
         include          = ["documents", "metadatas", "distances"],
     )
+    if where:
+        query_kwargs["where"] = where
+
+    results = collection.query(**query_kwargs)
 
     chunks = []
     for doc, meta, dist in zip(
@@ -86,7 +107,7 @@ def retrieve(query: str, top_k: int = TOP_K) -> list[dict]:
     return chunks
 
 
-# Generation 
+# ── Generation ────────────────────────────────────────────────────────────────
 SYSTEM_PROMPT = """You are a helpful assistant for Georgia State University students.
 You answer questions about CS professors using ONLY the student reviews provided to you.
 
@@ -136,13 +157,24 @@ Remember: answer using only the excerpts above. Cite which professor or source t
     return response.choices[0].message.content.strip()
 
 
-# End-to-end ask() function (used by app.py)
-def ask(query: str) -> dict:
+# ── End-to-end ask() function (used by app.py) ────────────────────────────────
+def ask(query: str, professor: str = None) -> dict:
     """
     Full RAG pipeline: retrieve → generate.
+
+    Args:
+        query:     The user's plain-English question.
+        professor: Optional metadata filter. Pass a professor filename prefix
+                   (e.g. "prof_Islam", "prof_Bal") to restrict retrieval to
+                   only that professor's review chunks. When set, ChromaDB
+                   applies a metadata filter at Stage 4 before cosine
+                   similarity ranking — only chunks from that source file
+                   are considered. This directly fixes the failure case in
+                   Question 1 of the evaluation plan.
+
     Returns: { answer: str, sources: list[str], chunks: list[dict] }
     """
-    chunks  = retrieve(query)
+    chunks  = retrieve(query, professor=professor)
     answer  = generate(query, chunks)
     sources = list(dict.fromkeys(c["source"] for c in chunks))  # unique, ordered
 
@@ -153,7 +185,7 @@ def ask(query: str) -> dict:
     }
 
 
-# Standalone testing of retrieval and generation (run `python src/query.py`)
+# ── Standalone test ───────────────────────────────────────────────────────────
 if __name__ == "__main__":
     test_questions = [
         "Which professor for CSC 2720 is most frequently described as explaining concepts clearly?",
