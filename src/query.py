@@ -111,13 +111,28 @@ def retrieve(query: str, top_k: int = TOP_K, professor: str = None) -> list[dict
 SYSTEM_PROMPT = """You are a helpful assistant for Georgia State University students.
 You answer questions about CS professors using ONLY the student reviews provided to you.
 
-Rules you must follow:
+CRITICAL rules you must follow:
 1. Answer ONLY using information found in the provided review excerpts.
 2. Do NOT use any outside knowledge about professors, courses, or universities.
-3. If the provided excerpts do not contain enough information to answer the question,
+3. Each excerpt is labeled with its source filename (e.g. prof_Alser.txt, prof_Bal.txt).
+   The filename tells you EXACTLY which professor the review is about:
+   - prof_Alser.txt = Mohammed Alser
+   - prof_Bal.txt = Bal Abdullah
+   - prof_Islam.txt = S M Towhidul Islam
+   - prof_Johnson.txt = William Johnson
+   - prof_Sadasivuni.txt = Tushara Sadasivuni
+   - prof_Kumar.txt = Saliesh Kumar
+   - prof_Ashok.txt = Ashwin Ashok
+   - prof_Bingyi.txt = Xie Bingyi
+   - prof_Esra.txt = Esra Akbas
+   - prof_Lan.txt = Gao Lan
+   - prof_Rahman.txt = Mahfuzur Rahman
+   - prof_Roya.txt = Hosseini Roya
+4. Always use the source filename to identify which professor a review is about,
+   even if the professor's name is not mentioned in the review text itself.
+5. If the provided excerpts do not contain enough information to answer the question,
    respond with exactly: "I don't have enough information in the available reviews to answer that."
-4. Always mention which professor(s) the information came from.
-5. Keep your answer concise and directly relevant to the question.
+6. Keep your answer concise and directly relevant to the question.
 """
 
 
@@ -127,10 +142,27 @@ def generate(query: str, chunks: list[dict]) -> str:
     Returns the model's response string.
     """
     # Build the context block from retrieved chunks
+    # Professor name lookup so context is always explicit
+    PROF_NAMES = {
+        "prof_Alser.txt":      "Mohammed Alser",
+        "prof_Ashok.txt":      "Ashwin Ashok",
+        "prof_Bal.txt":        "Bal Abdullah",
+        "prof_Bingyi.txt":     "Xie Bingyi",
+        "prof_Esra.txt":       "Esra Akbas",
+        "prof_Islam.txt":      "S M Towhidul Islam",
+        "prof_Johnson.txt":    "William Johnson",
+        "prof_Lan.txt":        "Gao Lan",
+        "prof_Rahman.txt":     "Mahfuzur Rahman",
+        "prof_Sadasivuni.txt": "Tushara Sadasivuni",
+        "prof_Kumar.txt":      "Saliesh Kumar",
+        "prof_Roya.txt":       "Hosseini Roya",
+    }
+
     context_parts = []
     for i, chunk in enumerate(chunks, 1):
+        prof_name = PROF_NAMES.get(chunk['source'], chunk['source'])
         context_parts.append(
-            f"[Excerpt {i} — source: {chunk['source']}]\n{chunk['text']}"
+            f"[Excerpt {i} — Professor: {prof_name} | source: {chunk['source']}]\n{chunk['text']}"
         )
     context = "\n\n".join(context_parts)
 
